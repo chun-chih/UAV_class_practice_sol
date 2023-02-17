@@ -46,10 +46,9 @@ public:
 
     // sum the numbers and publish
     void summation(){
-        
-        // Implement your code here
-
-
+        std_msgs::Int32 new_msg;
+        new_msg.data = number1 + number2 + number3;
+        cout << "Number Summation: " << new_msg.data << endl;
     }
 };
 

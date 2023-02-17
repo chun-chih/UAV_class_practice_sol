@@ -27,21 +27,10 @@ class Quadrotor():
         self.x_data = []
         self.y_data = []
         self.z_data = []
-
-        self.allocation_matrix = 0
         
-        '''
-        Checkpoint1 :  Please define the allocation matrix here !
-        Hint: 1.  week4 slide p.39
-              2.  self.L1 = size/2 , self.L2 = size/2 , self.cf = 0.01
+        self.allocation_matrix = np.array([[1 ,1, 1, 1],[self.L1, -self.L1 ,-self.L1 ,self.L1],
+                                           [-self.L2 ,-self.L2 ,self.L2 ,self.L2], [self.cf, -self.cf, self.cf, -self.cf]])
         
-        
-        self.allocation_matrix = np.array([[     ,      ,      ,      ],
-                                           [     ,      ,      ,      ],
-                                           [     ,      ,      ,      ], 
-                                           [     ,      ,      ,      ]])    
-        '''
-
         self.invallocation_matrix = np.linalg.inv(self.allocation_matrix)
         
         self.show_animation = show_animation
@@ -78,19 +67,13 @@ class Quadrotor():
         roll = self.roll
         pitch = self.pitch
         yaw = self.yaw
-   
-        return 0
-        '''
-        Checkpoint2 :   Please define the rotation matrix here :  Body frame -> Inertia frame
-        Hint : week4 slide p.43
-
-                return np.array(
-                [[      ,       ,         ,    x],
-                    [      ,       ,         ,    y],
-                    [      ,       ,         ,    z]])
-
-        '''
-
+        
+        return np.array(
+            [[cos(yaw) * cos(pitch), -sin(yaw) * cos(roll) + cos(yaw) * sin(pitch) * sin(roll), sin(yaw) * sin(roll) + cos(yaw) * sin(pitch) * cos(roll), x],
+             [sin(yaw) * cos(pitch), cos(yaw) * cos(roll) + sin(yaw) * sin(pitch)
+              * sin(roll), -cos(yaw) * sin(roll) + sin(yaw) * sin(pitch) * cos(roll), y],
+             [-sin(pitch), cos(pitch) * sin(roll), cos(pitch) * cos(yaw), z]
+             ])
 
     def plot(self):  # pragma: no cover
         T = self.transformation_matrix()

@@ -40,19 +40,19 @@ for i=1:iter
     %     Finish your code here
     
     
-    %     -------Newton's method + backtracking line search--------
+    % Newton's method + backtracking line search
+    gradient1 = gradient_x1(x1_newton,x2_newton);
+    gradient2 = gradient_x2(x1_newton,x2_newton);
     
-    %     gradient1 = gradient_x1(x1,x2);
-    %     gradient2 = gradient_x2(x1,x2);
-    %     
-    %     t = BLS(x1,x2,t,gradient1,gradient2,fg);
-    %     x1_newton= 
-    %     x2_newton= 
-    %     
-    %     ----------------Descent method---------------
-    %     descent_step = 
-    %     x1_descent= 
-    %     x2_descent= 
+    t = BLS(x1_newton,x2_newton,t,gradient1,gradient2,fg);
+    x1_newton=x1_newton - t*(0.1*gradient_x1(x1_newton,x2_newton));
+    x2_newton=x2_newton - t*(gradient_x2(x1_newton,x2_newton));
+    
+    % Descent method
+    t_descent = 0.005;
+    x1_descent=x1_descent - t_descent*(gradient_x1(x1_descent,x2_descent));
+    x2_descent=x2_descent - t_descent*(gradient_x2(x1_descent,x2_descent));
+    
         
     % store value in array
     Newton_value(1,i) = fg(x1_newton,x2_newton);

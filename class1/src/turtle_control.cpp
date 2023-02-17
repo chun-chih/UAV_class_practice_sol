@@ -53,22 +53,21 @@ void KeyboardControl()
   {
     switch (c)
     {
-      // finish your code here
-
       case 119:    // key w
-        
+        vel_msg.linear.x += 0.5;
         break;
       case 115:    // key s
-        
+        vel_msg.linear.x += -0.5;
         break;
       case 100:    // key d
-        
+        vel_msg.angular.z += -0.1;
         break;
       case 97:    // key a
-        
+        vel_msg.angular.z += 0.1;
         break;
-      case 114:    // key r, stop the turtle 
-        
+      case 114:    // key r
+        vel_msg.linear.x = 0;
+        vel_msg.angular.z = 0;
         break;
     }
   }
@@ -76,11 +75,11 @@ void KeyboardControl()
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "turtle_control");
+  ros::init(argc, argv, "solution");
   ros::NodeHandle n;
 
-  // declare publisher, which turtle are you?
-  ros::Publisher turtlesim_pub = n.advertise<geometry_msgs::Twist>("???", 100);
+  // declare publisher
+  ros::Publisher turtlesim_pub = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 100);
 
   // setting frequency as 100 Hz
   ros::Rate loop_rate(100);
@@ -90,11 +89,9 @@ int main(int argc, char **argv)
   int count = 0;
 
   while (ros::ok()){
-    
-    // control turtle twist 
+  
     KeyboardControl();
     turtlesim_pub.publish(vel_msg);
-    // print on screen
     printf("\ncount : %d\n",count);
     printf("linear\t %f \n",vel_msg.linear.x);
     printf("angular\t %f \n",vel_msg.angular.z);

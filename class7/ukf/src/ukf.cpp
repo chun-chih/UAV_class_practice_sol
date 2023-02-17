@@ -13,7 +13,7 @@ ukf::ukf(int state_size , int measurement_size){
   // Initialization : determine the points for uncented transform
   // -------------------------------------------
   L = x_size;
-  x_sigmavector_size = ?;
+  x_sigmavector_size = 2 * L + 1;
 
   x.setZero(x_size);
   y.setZero(y_size);
@@ -36,12 +36,12 @@ ukf::ukf(int state_size , int measurement_size){
   /* ------------------
     Initialization: define weighting
   -------------------- */
-  w_c(0) = ?;
-  w_m(0) = ?;
+  w_c(0) = lambda / ((L + lambda) + (1 - alpha * alpha + beta));
+  w_m(0) = lambda / (L + lambda);
 
   for(int i=1 ; i < x_sigmavector_size ; i++){
-    w_c(i) = ?;
-    w_m(i) = ?;
+    w_c(i) = 1 / (2 * (L + lambda));
+    w_m(i) = 1 / (2 * (L + lambda));
   }
 
   // default Q R P matrix
@@ -73,8 +73,8 @@ void ukf::predict(){
 
   for(int i=0;i<x_size;i++){
     Eigen::VectorXd sigma = (M.row(i)).transpose();
-    x_sigmavector.col(i+1) = ?;
-    x_sigmavector.col(i+x_size+1) = ?;
+    x_sigmavector.col(i+1) = x + sigma;
+    x_sigmavector.col(i+x_size+1) = x - sigma;
   }
 
   // process model
@@ -89,7 +89,7 @@ void ukf::predict(){
   -------------------- */
 
   for(int i=0;i<x_sigmavector_size;i++){
-    x_hat += ? ;
+    x_hat += w_m(i) * x_sigmavector.col(i) ;
   }
 
   //covariance
@@ -101,7 +101,7 @@ void ukf::predict(){
   -------------------- */
 
   for(int i=0 ; i<x_sigmavector_size ;i++){
-    P_ += ?;
+    P_ += w_c(i) * (x_sigmavector.col(i) - x_hat) * (x_sigmavector.col(i) - x_hat).transpose();
   }
   //add process noise covariance
   P_ += Q;
@@ -110,7 +110,7 @@ void ukf::predict(){
     Prediction: Dynamics model
   -------------------- */
 
-  y_sigmavector = ?; //6*25
+  y_sigmavector = H * x_sigmavector; //6*25
 
   //y_hat (mean)
   y_hat.setZero(y_size);
@@ -119,7 +119,7 @@ void ukf::predict(){
 Correction: points for uncent transform
 -------------------- */
   for(int i=0;i< x_sigmavector_size;i++){
-    y_hat += ?;
+    y_hat += w_m(i) * y_sigmavector.col(i);
   }
 }
 
@@ -177,10 +177,10 @@ void ukf::correct(Eigen::VectorXd measure){
     Eigen::MatrixXd y_err;
     Eigen::MatrixXd y_err_t;
 
-    y_err = ?;
+    y_err = y_sigmavector.col(i) - y_hat;
     y_err_t = y_err.transpose();
 
-    P_yy += ?;
+    P_yy += w_c(i) * y_err  * y_err_t;
   }
 
   /*--------------------
@@ -190,10 +190,10 @@ void ukf::correct(Eigen::VectorXd measure){
 
   for(int i=0;i<x_sigmavector_size;i++){
     Eigen::VectorXd y_err , x_err;
-    y_err = ?;
-    x_err = ?;
+    y_err = y_sigmavector.col(i) - y_hat;
+    x_err = x_sigmavector.col(i) - x_hat;
 
-    P_xy += ?;
+    P_xy += w_c(i) * x_err * y_err.transpose();
   }
 
 
@@ -201,11 +201,11 @@ void ukf::correct(Eigen::VectorXd measure){
   Correction: correct states and covariance
   --------------------*/
   
-  Kalman_gain = ?; //12*6
+  Kalman_gain = P_xy * P_yy.inverse(); //12*6
 
   // correct states and covariance
-  x = ?;
-  P = ?;
+  x = x_hat + Kalman_gain * (y - y_hat);
+  P = P_ - Kalman_gain * P_yy * (Kalman_gain.transpose());
 
   //----------------
   p_value = x[6]*x[6]+x[7]*x[7]+x[8]*x[8];

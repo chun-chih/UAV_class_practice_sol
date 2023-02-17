@@ -63,14 +63,10 @@ void follower_cb2(const turtlesim::Pose::ConstPtr& msg)
 // transform leader frame to world frame
 void leadertoworld2D(geometry_msgs::Point &follower_goal, turtlesim::Pose &leader)
 {
-	/*------------------------------
-	Finish your code here, for example :
-
-	float temp_x = follower_goal.x;
-	follower_goal.x = cos(leader.theta) + ......
-	
-
-	---------------------------------*/
+	float x1 = follower_goal.x;
+	float y1 = follower_goal.y;
+	follower_goal.x =   cos(-leader.theta) * x1 + sin(-leader.theta) * y1  + leader.x;
+	follower_goal.y = - sin(-leader.theta) * x1 + cos(-leader.theta) * y1  + leader.y;
 } 
 
 
@@ -78,11 +74,10 @@ void leadertoworld2D(geometry_msgs::Point &follower_goal, turtlesim::Pose &leade
 // rotate the world frame coordinate to body frame 
 void worldtobody2D(float &x, float &y, float theta)
 {
-	/* --------------------
-	Finish your code here
-
-
-	----------------------*/
+	float x1 = x;
+	float y1 = y;
+	x = cos(theta) * x1 + sin(theta) * y1 ;
+	y = - sin(theta) * x1 + cos(theta) * y1 ;
 } 
 
 
@@ -107,15 +102,14 @@ void Positioncontrol(geometry_msgs::Point &goal, turtlesim::Pose &follower, geom
 
 	// Design your controller here, you may use a simple P controller
 	
-	/*--------------------------
+	//Publish control input	
+	vel_msg.linear.x = error_norm;
+	vel_msg.angular.z = error_theta;
 
-
-		ex: vel_msg.x = ....
-			vel_msg.theta = ....
-
-
-
-	-----------------------------*/
+	if (error_norm < 0.1) {
+		vel_msg.linear.x = 0;
+		vel_msg.angular.z = 0;
+	}
 }
 
 

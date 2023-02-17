@@ -61,16 +61,16 @@ def quad_sim(x_c, y_c, z_c):
     pitch = 0
     yaw = 0
     
-    eul_angle = np.array([[0],[0],[0]])
-    angular_vel = np.array([[0],[0],[0]])
+    eul_angle = np.array([[0],[0],[0]]); 
+    angular_vel = np.array([[0], [0] , [0]]);
     
     # desire yaw angle
     des_yaw = 0
 
     # desire angular velocity, we want the quadcopter to avoid rotating
-    des_yaw_rate = 0
-    des_roll_rate = 0
-    des_pitch_rate = 0
+    des_yaw_rate = 0;
+    des_roll_rate = 0;
+    des_pitch_rate = 0;
     
     # time initialize
     dt = 0.1
@@ -91,58 +91,44 @@ def quad_sim(x_c, y_c, z_c):
             
             des_z_pos = calculate_position(z_c[i], t)
             des_z_vel = calculate_velocity(z_c[i], t)
-            
             des_x_acc = calculate_acceleration(x_c[i], t)
             des_y_acc = calculate_acceleration(y_c[i], t)
             des_z_acc = calculate_acceleration(z_c[i], t)
             
-            roll_rate = angular_vel[0]
-            pitch_rate = angular_vel[1]
-            yaw_rate = angular_vel[2]
+            # desire roll and pitch angle is depend on the acceleration
             
-            # Checkpoint5 :  Please define the desire roll and pitch angle (Hint: it depands on the acceleration of x, y )
+            des_roll = asin(-des_y_acc/g); # arcsin can be seen as linear if the angle is sufficiently small
+            des_pitch = asin(des_x_acc/g);
+            '''
+            ---------------error definition------------------
+            '''
+            # error 
+            ex_z = des_z_pos - z_pos;
+            ev_z = des_z_vel - z_vel;
             
-            '''
-            des_roll = 
-            des_pitch = 
-            '''
-
-            # Checkpoint3 :   Please define the error term here !
-            
-            '''
-            # position error  (z)
-            ex_z = 
-
             # angle error
-            er_roll = 
-            er_pitch = 
-            er_yaw = 
-                
-            # velocity error (z)
-            ev_z = ;
+            er_roll = des_roll - roll;
+            er_pitch = des_pitch - pitch;
+            er_yaw = des_yaw - yaw;
             
             # angular velocity error
-            ew_roll = ;
-            ew_pitch = ;
-            ew_yaw = ;
+            ew_roll = des_roll_rate - angular_vel[0];
+            ew_pitch = des_pitch_rate - angular_vel[1];
+            ew_yaw = des_yaw_rate - angular_vel[2];
             
             '''
-
-            # Checkpoint4 :  Please design your controller here !    
-            
+            ---------------------Controller design------------------
             '''
+            
             # translation controller
-            total_thrust = 
+            total_thrust = q.m * (g + des_z_acc + Kp_z * ex_z + Kd_z * ev_z)
             
             
             # rotation controller
-            roll_torque = 
-            pitch_torque = 
-            yaw_torque = 
+            roll_torque = (Kp_roll * er_roll + Kd_roll * ew_roll ) * q.Ixx
+            pitch_torque = (Kp_pitch * er_pitch + Kd_pitch * ew_pitch) * q.Iyy
+            yaw_torque = (Kp_yaw * er_yaw + Kd_yaw * ew_yaw) * q.Izz
             
-            '''
-            
-            # mix all torque into tau
             total_moment = np.array([ np.array([roll_torque]), np.array([pitch_torque]), yaw_torque], dtype=object)
             
             
@@ -163,12 +149,12 @@ def quad_sim(x_c, y_c, z_c):
             # equation (2) in week4
             
             angular_acc = (np.linalg.inv(J)) @ (total_moment_real - vec_cross(eul_angle, np.matmul(J,eul_angle)));
-            angular_vel = angular_vel + angular_acc*dt
+            angular_vel = angular_vel + angular_acc*dt;
             eul_angle = eul_angle + angular_vel*dt
             
-            roll = eul_angle[0]
-            pitch = eul_angle[1]
-            yaw = eul_angle[2]
+            roll = eul_angle[0];
+            pitch = eul_angle[1];
+            yaw = eul_angle[2];
             
             # get the rotation matrix from roll, pitch, yaw angle
             R = rotation_matrix(roll, pitch, yaw)

@@ -214,5 +214,5 @@ target_link_libraries(number_sum ${catkin_LIBRARIES})
 add_executable(turtle_control src/turtle_control.cpp)
 target_link_libraries(turtle_control ${catkin_LIBRARIES})
 
-add_executable(turtle_more src/turtle_more.cpp)
-target_link_libraries(turtle_more ${catkin_LIBRARIES})
+add_executable(turtle_spawn src/turtle_more.cpp)
+target_link_libraries(turtle_spawn ${catkin_LIBRARIES})

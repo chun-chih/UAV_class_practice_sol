@@ -47,11 +47,10 @@ void turtle_cb(const turtlesim::Pose::ConstPtr& msg)
 // rotate the world frame coordinate to body frame 
 void worldtobody2D(float &x, float &y, float theta)
 {
-	/* --------------------
-	Finish your code here
-
-
-	----------------------*/
+	float x1 = x;
+	float y1 = y;
+	x = cos(theta) * x1 + sin(theta) * y1 ;
+	y = - sin(theta) * x1 + cos(theta) * y1 ;
 } 
 
 
@@ -76,15 +75,13 @@ void Positioncontrol(geometry_msgs::Point &goal, turtlesim::Pose &turtle_pose, g
 
 	// Design your controller here, you may use a simple P controller
 	
-	/*--------------------------
+	turtle_vel_msg.linear.x = error_norm;
+	turtle_vel_msg.angular.z = error_theta;
 
-
-		ex: turtle_vel_msg.x = ....
-			turtle_vel_msg.theta = ....
-
-
-
-	-----------------------------*/
+	if (error_norm < 0.1) {
+		turtle_vel_msg.linear.x = 0;
+		turtle_vel_msg.angular.z = 0;
+	}
 }
 
 

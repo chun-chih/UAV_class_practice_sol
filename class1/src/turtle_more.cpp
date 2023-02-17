@@ -15,26 +15,27 @@ int main(int argc, char **argv)
     // Check if the service is on
     ros::service::waitForService("/turtlesim/spawn");
 
-    // initialize kill turtle service
+    // remove the original turtle
     ros::ServiceClient client_kill=n.serviceClient<turtlesim::Kill>("/turtlesim/kill");
     turtlesim::Kill kill_name;
-    // define parameters in service
     kill_name.request.name = "turtle1";
-    // call the service
     client_kill.call(kill_name); 
 
-
-    // initialize spawn turtle service
-    ros::ServiceClient client_spawn = n.serviceClient<turtlesim::Spawn>("???");
+    // spawn turtles
+    ros::ServiceClient client_spawn = n.serviceClient<turtlesim::Spawn>("/turtlesim/spawn");
     turtlesim::Spawn turtle;
 
-    // Finish your code, you will need to spawn turtles
+    // define your names of turtles
+    string names[] = {"member1","member2","member3","member4"};
+    size_t length = sizeof(names) / sizeof(names[0]);
 
-
-
-
-
-
-    
+    // define spawn position
+    for(int i = 0; i< length ;i++){
+        turtle.request.name = names[i];
+        turtle.request.x = 2*(i+1);
+        turtle.request.y = 2*(i+1);
+        turtle.request.theta = 0;
+        client_spawn.call(turtle);
+    }
 
 }
