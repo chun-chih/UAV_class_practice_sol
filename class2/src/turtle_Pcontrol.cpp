@@ -5,6 +5,7 @@
 #include <turtlesim/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Point.h>
+#include <eigen3/Eigen/Dense>
 
 // include math 
 #include <math.h>
@@ -50,8 +51,21 @@ void worldtobody2D(float &x, float &y, float theta)
 	float x1 = x;
 	float y1 = y;
 	x = cos(theta) * x1 + sin(theta) * y1 ;
-	y = - sin(theta) * x1 + cos(theta) * y1 ;
+	y = - sin(theta) * x1 + cos(theta) * y1;
+	std::cout << "x rot: " << x << std::endl;
 } 
+
+void worldtobodyQuat(float x, float y, float theta)
+{
+	Eigen::Quaterniond q(cos(theta/2), 0, 0, sin(theta/2)); // w, x, y, z
+	Eigen::Quaterniond q_normalized(q.w()/q.norm(), q.x()/q.norm(), q.y()/q.norm(), q.z()/q.norm());
+	Eigen::Quaterniond v(0, x, y, 0);
+	Eigen::Quaterniond v_new = q_normalized.inverse()*v*q_normalized;
+	x = v_new.x();
+	y = v_new.y();
+
+	std::cout << "x quat: " << x << std::endl;
+}
 
 
 // P control for goal position in world frame 
@@ -62,6 +76,7 @@ void Positioncontrol(geometry_msgs::Point &goal, turtlesim::Pose &turtle_pose, g
 	pos_err_I.y = goal.y - turtle_pose.y;
 
 	// Find the goal_point position in Body(turtlesim) frame
+	worldtobodyQuat(pos_err_I.x, pos_err_I.y, turtle_pose.theta);
 	worldtobody2D(pos_err_I.x, pos_err_I.y, turtle_pose.theta);
 
 	// Find the error postion 

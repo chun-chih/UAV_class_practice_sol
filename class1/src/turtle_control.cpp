@@ -79,7 +79,7 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
 
   // declare publisher
-  ros::Publisher turtlesim_pub = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 100);
+  ros::Publisher turtlesim_pub = n.advertise<geometry_msgs::Twist>("/turtlesim/turtle1/cmd_vel", 100);
 
   // setting frequency as 100 Hz
   ros::Rate loop_rate(100);
