@@ -103,7 +103,7 @@ void Positioncontrol(geometry_msgs::Point &goal, turtlesim::Pose &turtle_pose, g
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "turtle_Pcontrol");
+	ros::init(argc, argv, "turtle_Pcontrol_W");
   	ros::NodeHandle n;
 
   	// declare publisher & subscriber

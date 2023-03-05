@@ -214,5 +214,8 @@ target_link_libraries(turtle_keyboard ${catkin_LIBRARIES})
 add_executable(turtle_formation src/turtle_formation.cpp)
 target_link_libraries(turtle_formation ${catkin_LIBRARIES})
 
-add_executable(turtle_Pcontrol src/turtle_Pcontrol.cpp)
-target_link_libraries(turtle_Pcontrol ${catkin_LIBRARIES})
+add_executable(turtle_Pcontrol_W src/turtle_Pcontrol_W.cpp)
+target_link_libraries(turtle_Pcontrol_W ${catkin_LIBRARIES})
+
+add_executable(turtle_Pcontrol_B src/turtle_Pcontrol_B.cpp)
+target_link_libraries(turtle_Pcontrol_B ${catkin_LIBRARIES})
