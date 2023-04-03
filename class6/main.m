@@ -2,7 +2,7 @@
 close all;
 
 % simulation time
-dt = 0.005;
+dt = 0.001;
 sim_t = 20;
 
 % initialize parameters
@@ -14,7 +14,6 @@ multirotor.m = 1.15;
 multirotor.J = [0.0131, 0, 0;
                 0, 0.0131, 0;
                 0, 0, 0.0244];
-
 multirotor.d = 0.225;
 multirotor.c_tau = 1.347e-2;
 multirotor.allocation_matrix = cal_allocation_matrix(multirotor.d, multirotor.c_tau);

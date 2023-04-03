@@ -6,7 +6,7 @@ classdef trajectory
            % xd
            out(1) = sin(1*t);
            out(2) = sin(1*t);
-           out(3) = 3;
+           out(3) = 1;
            % vd
            out(4) = 1*cos(1*t);
            out(5) = 1*cos(1*t);
